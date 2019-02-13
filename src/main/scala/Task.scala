@@ -1,9 +1,7 @@
-class Task(details: String, status: Int, index: Int) {
+class Task(details: String, status: Int = 1) {
     
     val taskDetails = details
-    val taskStatus = status
-    val taskIndex = index
-    
+    var taskStatus = status
 
     def getStatus() : String = {
         this.taskStatus match {
@@ -12,16 +10,20 @@ class Task(details: String, status: Int, index: Int) {
             case 3 => "Completed"
         }
     }
+
+    def setStatus(status: Int) = {
+        taskStatus = status
+    }
     
     def updateStatus() : Task = {
         this.taskStatus match {
-            case 1 => new Task(taskDetails, 2, taskIndex)
-            case 2 => new Task(taskDetails, 3, taskIndex)
+            case 1 => new Task(taskDetails, 2)
+            case 2 => new Task(taskDetails, 3)
             case 3 => throw new IllegalArgumentException("Task is already completed")
         }
     }
     
-    def prettyPrint() : Unit = {
-        println("Task " + taskIndex + ": " + taskDetails + " Status: " + getStatus())
+    def prettyPrint(index : Int) : Unit = {
+        println("Task " + index + ": " + taskDetails + " Status: " + getStatus())
     }
 }

@@ -1,69 +1,64 @@
 object Main extends App{
-    // Your code here!
 
-    val taskList = new TaskList(Nil)
-    val doLaundry = new Task("do laundry", 1, 0)
-    val buyGroceries = new Task("buy groceries", 1, 1)
-    val buyGroceries_2 = new Task("buy groceries", 2, 2)
-    val buyGroceries_3 = new Task("buy groceries", 3, 2)
-    val cleanRoom = new Task("clean room", 1, 3)
+    val taskList = new TaskList()
+    val doLaundry = new Task("do laundry", 1)
+    val buyGroceries = new Task("buy groceries", 1)
+    val buyGroceries_2 = new Task("buy groceries", 2)
+    val buyGroceries_3 = new Task("buy groceries", 3)
+    val cleanRoom = new Task("clean room", 1)
+
+    // println("--------Test Set Status--------")
+    // doLaundry.setStatus(2)
+    // val doLaundryTest = new Task("do laundry", 2)
+    // println(compareTask(doLaundry, doLaundryTest))
     
-    // println("--------Add task to list tests--------")
-    // taskList.addTask("do laundry") 
-    // val x = List(doLaundry)
-    // test(taskList.tasks, List(doLaundry))
+    // buyGroceries.setStatus(3)
+    // val buyGroceriesTest = new Task("buy groceries", 3)
+    // println(compareTask(buyGroceries, buyGroceriesTest))
+
+    println("--------Add task to list tests--------")
+    taskList.clearList()
     
-    // taskList.addTask("buy groceries")
-    // test(taskList.tasks, List(doLaundry, buyGroceries))
+    taskList.addTask("do laundry") 
+    val x = List(doLaundry)
+    test(taskList.tasks, List(doLaundry))
     
-    // taskList.addTask("clean room")
-    // test(taskList.tasks, List(doLaundry, buyGroceries, cleanRoom))
+    taskList.addTask("buy groceries")
+    test(taskList.tasks, List(doLaundry, buyGroceries))
     
-    // println("--------Remove task from list--------")
-    // taskList.removeTask(0)
-    // test(taskList.tasks, List(buyGroceries, cleanRoom))
+    taskList.addTask("clean room")
+    test(taskList.tasks, List(doLaundry, buyGroceries, cleanRoom))
     
-    // taskList.removeTask(1) 
-    // test(taskList.tasks, List(buyGroceries))
+    println("--------Remove task from list--------")
+    taskList.removeTask(0)
+    test(taskList.tasks, List(buyGroceries, cleanRoom))
+    
+    taskList.removeTask(1) 
+    test(taskList.tasks, List(buyGroceries))
     
     // println("--------Get size of list--------")
-    // println(taskList.tasksLength() == 0) 
+    // taskList.clearList()
+    // println(taskList.getLength())
+    // println(taskList.getLength() == 0) 
 
     // taskList.addTask("bake cookies") 
     // taskList.addTask("do laundry")
-    // println(taskList.tasksLength() == 2)
+    // println(taskList.getLength())
+    // println(taskList.getLength() == 2)
 
-    // println("--------Update task--------")
-    // taskList.updateTask(0) 
-    // test(taskList.tasks, List(buyGroceries_2))
+    println("--------Update task--------")
+    taskList.updateTask(0) 
+    test(taskList.tasks, List(buyGroceries_2))
     
-    // taskList.addTask("clean room")
-    // test(taskList.tasks, List(buyGroceries_2, cleanRoom))
+    taskList.addTask("clean room")
+    test(taskList.tasks, List(buyGroceries_2, cleanRoom))
     
-    // taskList.updateTask(0)
-    // test(taskList.tasks, List(buyGroceries_3, cleanRoom))
+    taskList.updateTask(0)
+    test(taskList.tasks, List(buyGroceries_3, cleanRoom))
     
-    // println("--------Get completed--------")
-    // val completed = taskList.getCompleted()
-    // test(completed, List(buyGroceries_3))
-
-
-    def compareList(l1: List[Task], l2: List[Task]): Boolean = {
-        (l1, l2) match {
-            case ((h1 :: t1), (h2 :: t2)) => h1.taskDetails == h2.taskDetails && h1.taskStatus == h2.taskStatus
-            case (_, _) => false 
-            
-        }
-    }
-    
-    def test(l1: List[Task], l2: List[Task]) : Unit = {
-        if(compareList(l1, l2)) {
-            println(true)
-        } else {
-            println("Expected: " + l2.foreach(value => (value).prettyPrint()))
-            println("Actual: " + l1.foreach(value => (value).prettyPrint()))
-        }
-    }
+    println("--------Get completed--------")
+    val completed = taskList.getCompleted().tasks
+    test(completed, List(buyGroceries_3))
 
     val options = """    
     - add <task> : to add a task to the list 
@@ -94,6 +89,28 @@ object Main extends App{
             case "show"      => taskList.prettyPrint()
             case "quit"      => quit = true
             case _           => println("Error try again")
+        }
+    }
+
+    def compareList(l1: List[Task], l2: List[Task]): Boolean = {
+        (l1, l2) match {
+            case ((h1 :: t1), (h2 :: t2)) => compareTask(h1, h2)
+            case (_, _) => false 
+            
+        }
+    }
+
+    def compareTask(t1: Task, t2: Task) : Boolean = {
+        t1.taskDetails == t2.taskDetails && t1.taskStatus == t2.taskStatus
+    }
+    
+    def test(l1: List[Task], l2: List[Task]) : Unit = {
+        if(compareList(l1, l2)) {
+            println(true)
+        } else {
+            println("TEST FAILED")
+            println("Expected: " + (new TaskList(l2)).prettyPrint())
+            println("Actual: " + (new TaskList(l1)).prettyPrint())
         }
     }
 }
