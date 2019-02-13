@@ -2,11 +2,11 @@ object Main extends App{
     // Your code here!
 
     val taskList = new TaskList(Nil)
-    val doLaundry = new Task("do laundry", 1)
-    val buyGroceries = new Task("buy groceries", 1)
-    val buyGroceries_2 = new Task("buy groceries", 2)
-    val buyGroceries_3 = new Task("buy groceries", 3)
-    val cleanRoom = new Task("clean room", 1)
+    val doLaundry = new Task("do laundry", 1, 0)
+    val buyGroceries = new Task("buy groceries", 1, 1)
+    val buyGroceries_2 = new Task("buy groceries", 2, 2)
+    val buyGroceries_3 = new Task("buy groceries", 3, 2)
+    val cleanRoom = new Task("clean room", 1, 3)
     
     // println("--------Add task to list tests--------")
     // taskList.addTask("do laundry") 
@@ -26,6 +26,13 @@ object Main extends App{
     // taskList.removeTask(1) 
     // test(taskList.tasks, List(buyGroceries))
     
+    // println("--------Get size of list--------")
+    // println(taskList.tasksLength() == 0) 
+
+    // taskList.addTask("bake cookies") 
+    // taskList.addTask("do laundry")
+    // println(taskList.tasksLength() == 2)
+
     // println("--------Update task--------")
     // taskList.updateTask(0) 
     // test(taskList.tasks, List(buyGroceries_2))
@@ -43,7 +50,7 @@ object Main extends App{
 
     def compareList(l1: List[Task], l2: List[Task]): Boolean = {
         (l1, l2) match {
-            case ((h1 :: t1), (h2 :: t2)) => h1.details == h2.details  && h1.status == h2.status 
+            case ((h1 :: t1), (h2 :: t2)) => h1.taskDetails == h2.taskDetails && h1.taskStatus == h2.taskStatus
             case (_, _) => false 
             
         }
@@ -53,27 +60,40 @@ object Main extends App{
         if(compareList(l1, l2)) {
             println(true)
         } else {
-            println("Expected: " + l2.foreach(t => t.prettyPrint()))
-            println("Actual: " + l1.foreach(t => t.prettyPrint()))
+            println("Expected: " + l2.foreach(value => (value).prettyPrint()))
+            println("Actual: " + l1.foreach(value => (value).prettyPrint()))
         }
     }
-    println("Start making your To Do list - use add <task>, complete <task index> or quit")
+
+    val options = """    
+    - add <task> : to add a task to the list 
+    - remove <index> : remove the task at the provided index
+    - update <index> : update task at the given index (To Do, In Progress, Completed)
+    - completed : print all of the completed tasks
+    - show : print all of the tasks
+    - quit : to quit the program
+    """
+
+    println("Start making your To Do list. Use the following commands: ")
     
     val scanner = new java.util.Scanner(System.in)
     
     var quit = false
     
+    val parser = new Parser()
+
     while(!quit) {
+        println(options)
         val input = scanner.nextLine()
-        println(">")
-        input match {
-            case in if in.startsWith("add ") => taskList.addTask(input.substring(4))
-            case in if in.startsWith("remove ") => taskList.removeTask(input.substring(7).toInt)
-            case in if in.startsWith("update") => taskList.updateTask(input.substring(7).toInt)
-            case in if in.startsWith("completed") => taskList.getCompleted().prettyPrint()
-            case in if in.startsWith("show") => taskList.prettyPrint()
-            case in if in.startsWith("quit") => quit = true; println("GOODBYE")
-            case _ => println("thats not allowed")
+        val (instr, value) = parser.parse(input)
+        instr match {
+            case "add"       => taskList.addTask(value)
+            case "remove"    => taskList.removeTask(value.toInt)
+            case "update"    => taskList.updateTask(value.toInt)
+            case "completed" => taskList.getCompleted().prettyPrint()
+            case "show"      => taskList.prettyPrint()
+            case "quit"      => quit = true
+            case _           => println("Error try again")
         }
     }
 }

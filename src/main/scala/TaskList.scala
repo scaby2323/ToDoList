@@ -3,8 +3,13 @@ class TaskList(taskList: List[Task] = Nil) {
     var tasks: List[Task] = taskList
     
     def addTask(task: String): Unit = {
-        val newTask = new Task(task, 1)
+        val count = tasksLength()
+        val newTask = new Task(task, 1, count)
         tasks = tasks :+ newTask
+    }
+
+    def tasksLength() : Integer = {
+        tasks.foldLeft(0)((acc: Int, task: Task) => acc + 1)
     }
     
     def removeTask(task: Integer): Unit = {
@@ -16,10 +21,12 @@ class TaskList(taskList: List[Task] = Nil) {
     } 
     
     def getCompleted() : TaskList = {
-        return new TaskList(tasks.filter(t => t.status == 3))
+        return new TaskList(tasks.filter(t => t.taskStatus == 3))
     }
 
     def prettyPrint() : Unit = {
+        // tasks.foldLeft("", 0)((acc: (String, Integer), task: Task) => (acc._1 + task.prettyPrint() + "\n", acc._2 + 1))
+
         tasks.foldLeft("")((acc: String, task: Task) => acc + task.prettyPrint() + "\n")
     }
 

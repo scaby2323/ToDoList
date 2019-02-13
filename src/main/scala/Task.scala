@@ -1,10 +1,12 @@
-class Task(deets: String, stat: Int) {
+class Task(details: String, status: Int, index: Int) {
     
-    val details = deets
-    val status = stat
+    val taskDetails = details
+    val taskStatus = status
+    val taskIndex = index
     
+
     def getStatus() : String = {
-        this.status match {
+        this.taskStatus match {
             case 1 => "To Do"
             case 2 => "In Progress"
             case 3 => "Completed"
@@ -12,14 +14,14 @@ class Task(deets: String, stat: Int) {
     }
     
     def updateStatus() : Task = {
-        this.status match {
-            case 1 => new Task(details, 2)
-            case 2 => new Task(details, 3)
+        this.taskStatus match {
+            case 1 => new Task(taskDetails, 2, taskIndex)
+            case 2 => new Task(taskDetails, 3, taskIndex)
             case 3 => throw new IllegalArgumentException("Task is already completed")
         }
     }
     
     def prettyPrint() : Unit = {
-        println("Task: " + details + " Status: " + getStatus())
+        println("Task " + taskIndex + ": " + taskDetails + " Status: " + getStatus())
     }
 }
