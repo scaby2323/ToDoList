@@ -63,17 +63,19 @@ object Main extends App{
     
     var quit = false
     
+    val parser = new Parser()
+
     while(!quit) {
         val input = scanner.nextLine()
-        println(">")
-        input match {
-            case in if in.startsWith("add ") => taskList.addTask(input.substring(4))
-            case in if in.startsWith("remove ") => taskList.removeTask(input.substring(7).toInt)
-            case in if in.startsWith("update") => taskList.updateTask(input.substring(7).toInt)
-            case in if in.startsWith("completed") => taskList.getCompleted().prettyPrint()
-            case in if in.startsWith("show") => taskList.prettyPrint()
-            case in if in.startsWith("quit") => quit = true; println("GOODBYE")
-            case _ => println("thats not allowed")
+        val (instr, value) = parser.parse(input)
+        instr match {
+            case "add"       => taskList.addTask(value)
+            case "remove"    => taskList.removeTask(value.toInt)
+            case "update"    => taskList.updateTask(value.toInt)
+            case "completed" => taskList.getCompleted().prettyPrint()
+            case "show"      => taskList.prettyPrint()
+            case "quit"      => quit = true
+            case _           => quit = false
         }
     }
 }
