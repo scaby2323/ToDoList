@@ -11,7 +11,7 @@ class Task(details: String, status: Int = 1) {
         }
     }
 
-    def setStatus(status: Int) = {
+    def setStatus(status: Int): Unit = {
         taskStatus = status
     }
     
