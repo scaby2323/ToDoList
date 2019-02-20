@@ -1,26 +1,22 @@
 class Test {
 	def compareCart(l1: ShoppingCart, l2: ShoppingCart): Boolean = {
 		(l1.items, l2.items) match {
-			case ((h1 :: t1), (h2 :: t2)) => compareItemInCart(h1, h2)
+			case ((h1 :: t1), (h2 :: t2)) => compareItem(h1, h2)
 			case (_, _) => false 
 		}
 	}
 
-	def compareItemInCart(i1: ShoppingCartItem, i2: ShoppingCartItem) : Boolean = {
-		compareItem(i1.item, i2.item) && i1.quantity == i2.quantity
-	}
-
 	def compareItem(i1: Item, i2: Item) : Boolean = {
-		i1.itemName == i2.itemName && i1.itemPrice == i2.itemPrice && i1.itemCat == i2.itemCat
+		i1.name == i2.name && i1.price == i2.price && i1.category == i2.category
 	}
 
 	def testShoppingCart(l1: ShoppingCart, l2: ShoppingCart) : Unit = {
 		if(compareCart(l1, l2)) {
 			println("PASSED")
 		} else {
+			println("FAILED")
 			println("Actual: " + l1.printCart())
 			println("Expected: " + l2.printCart())
-			println("FAILED")
 		}
 		println("--------")
 	}	
@@ -28,18 +24,19 @@ class Test {
 	def testValues(v1: Int , v2: Int) : Unit = {
 		if (v1 == v2) println("PASSED")
 		else {
-	 		println("Actual: " + v1) 
+	 		println("FAILED")
+			println("Actual: " + v1) 
 			println("Expected: " + v2)
-			println("FAILED")
 		}
 	}
 
 	def testDoubles(v1: Double, v2: Double) : Unit = {
 		if (v1 == v2) println("PASSED")
 		else {
-	 		println("Actual: " + v1) 
+	 		println("FAILED")
+			println("Actual: " + v1) 
 			println("Expected: " + v2)
-			println("FAILED")
+			
 		}
 	}
 
@@ -52,38 +49,44 @@ class Test {
 
 	def run() : Unit = {
 		println("--------Add items to cart tests--------")
-		cart.addToCart(item1, 1) 
-		val expectedCart1 = new ShoppingCart(List(new ShoppingCartItem(item1, 1)))
+		cart.addToCart(item1)
+		// cart = item1
+		val expectedCart1 = new ShoppingCart(List(item1))
 		testShoppingCart(cart, expectedCart1)
 
-		cart.addToCart(item2, 2)
-		val expectedCart2 = new ShoppingCart(List(new ShoppingCartItem(item1, 1), new ShoppingCartItem(item2, 2)))
+		cart.addToCart(item2)
+		// cart = item1, item2
+		val expectedCart2 = new ShoppingCart(List(item1, item2))
 		testShoppingCart(cart, expectedCart2)
 
 		println("--------Remove task from list--------")
 		cart.removeItem(item1)
-		val expectedCart3 = new ShoppingCart(List(new ShoppingCartItem(item2, 2)))
+		// cart = item2
+		val expectedCart3 = new ShoppingCart(List(item2))
 		testShoppingCart(cart, expectedCart3)
 
-		cart.addToCart(item3, 4)
-		val expectedCart4 = new ShoppingCart(List(new ShoppingCartItem(item2, 2), new ShoppingCartItem(item3, 4)))
+		cart.addToCart(item3)
+		// cart = item2, item3
+		val expectedCart4 = new ShoppingCart(List(item2, item3))
 		testShoppingCart(cart, expectedCart4)
 
-		cart.removeItem(item3, 2)
-		val expectedCart5 = new ShoppingCart(List(new ShoppingCartItem(item2, 2), new ShoppingCartItem(item3, 2)))
+		cart.removeItem(item3)
+		// cart = item2
+		val expectedCart5 = new ShoppingCart(List(item2))
 		testShoppingCart(cart, expectedCart5)
 
 		println("--------Get size of cart--------")
-		testValues(cart.getLength(), 4) 
+		testValues(cart.getLength(), 1) 
 
 		cart.addToCart(item4)
-		testValues(cart.getLength(), 5)
+		// cart = item2, item4 
+		testValues(cart.getLength(), 2)
 
 		println("--------Get total--------")
-		testDoubles(cart.getTotal(), 140.0) 
+		testDoubles(cart.getTotal(), 60.0) 
 
-		cart.removeItem(item2, 2)
-		cart.removeItem(item3, 2) 
+		cart.removeItem(item2)
+		// cart = item4
 		testDoubles(cart.getTotal(), 40.0)
 
 		println("--------Filter by Category--------")
@@ -91,19 +94,20 @@ class Test {
 		cart.addToCart(item1)
 		cart.addToCart(item2)
 		cart.addToCart(item3) 
-
+		// cart = item1, item2, item3
 		val xShoppingCart = cart.getByCategory("x") 
-		val expectedX = new ShoppingCart(List(new ShoppingCartItem(item1, 1), new ShoppingCartItem(item2, 1)))
+		val expectedX = new ShoppingCart(List(item1, item2))
 		testShoppingCart(xShoppingCart, expectedX)
 
 		val yShoppingCart = cart.getByCategory("y")
-		val expectedY = new ShoppingCart(List(new ShoppingCartItem(item3, 1)))
+		val expectedY = new ShoppingCart(List(item3))
 		testShoppingCart(yShoppingCart, expectedY)
+
 
 		println("--------Apply discount--------")
 
-		def halfOff(x: Double) = x / 2.0
-		def twoOff(x: Double) = x - 2
+		def halfOff = 0.5
+		def twoOff = 0.25
 
 		cart = new ShoppingCart()
 		cart.addToCart(item1)
@@ -112,7 +116,7 @@ class Test {
 
 		val item5 = new Item("a", 5.0, "x") 
 		val item6 = new Item("b", 10.0, "x")
-		val expectedCart6 = new ShoppingCart(List(new ShoppingCartItem(item5, 1), new ShoppingCartItem(item6, 1)))
+		val expectedCart6 = new ShoppingCart(List(item5, item6))
 		testShoppingCart(cart, expectedCart6)
 
 		cart = new ShoppingCart()
@@ -120,9 +124,9 @@ class Test {
 		cart.addToCart(item4)
 		cart.applyDiscount(twoOff)
 
-		val item7 = new Item("c", 28.0, "y")
-		val item8 = new Item("d", 38.0,  "z")
-		val expectedCart7 = new ShoppingCart(List(new ShoppingCartItem(item7, 1), new ShoppingCartItem(item8, 1)))
+		val item7 = new Item("c", 22.5, "y")
+		val item8 = new Item("d", 30,  "z")
+		val expectedCart7 = new ShoppingCart(List(item7, item8))
 		testShoppingCart(cart, expectedCart7)
 	}
 }
